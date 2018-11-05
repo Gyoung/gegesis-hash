@@ -14,14 +14,17 @@ import           Text.JSON.Canonical (JSValue, parseCanonicalJSON,
 main :: IO ()
 main = do
   f <- parseArgs
-  val <- readJSON f
-  print (blakeHash val)
+  val <- readFile2 f
+  print (blakeHash2 val)
 
 parseArgs :: IO (Maybe FilePath)
 parseArgs = getArgs >>= \case
   ["-"] -> pure Nothing
   [f] -> pure (Just f)
-  _ -> die "usage: genesis-hash INFILE.json" >> exitFailure
+  _ -> die "usage: genesis-hash  INFILE.json" >> exitFailure
+
+
+
 
 readJSON :: Maybe FilePath -> IO JSValue
 readJSON mf = do
@@ -34,3 +37,13 @@ readJSON mf = do
 
 blakeHash :: JSValue -> Digest Blake2b_256
 blakeHash = hashlazy . renderCanonicalJSON
+
+
+readFile2 :: Maybe FilePath -> IO L8.ByteString
+readFile2 mf = do
+    case mf of
+      Just f  -> L8.readFile f
+      Nothing -> L8.hGetContents stdin
+
+blakeHash2 :: L8.ByteString -> Digest Blake2b_256
+blakeHash2 = hashlazy
