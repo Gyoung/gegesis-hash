@@ -5,7 +5,7 @@ module Main where
 import           Universum
 
 import           Crypto.Hash (Digest, hashlazy)
-import           Crypto.Hash.Algorithms (Blake2b_256)
+import           Crypto.Hash.Algorithms (SHA256)
 import           Data.ByteString.Lazy.Char8 as L8
 import           System.IO (stdin)
 import           Text.JSON.Canonical (JSValue, parseCanonicalJSON,
@@ -35,7 +35,7 @@ readJSON mf = do
     Right v -> pure v
     Left e  -> die e >> exitFailure
 
-blakeHash :: JSValue -> Digest Blake2b_256
+blakeHash :: JSValue -> Digest SHA256
 blakeHash = hashlazy . renderCanonicalJSON
 
 
@@ -45,5 +45,5 @@ readFile2 mf = do
       Just f  -> L8.readFile f
       Nothing -> L8.hGetContents stdin
 
-blakeHash2 :: L8.ByteString -> Digest Blake2b_256
+blakeHash2 :: L8.ByteString -> Digest SHA256
 blakeHash2 = hashlazy
